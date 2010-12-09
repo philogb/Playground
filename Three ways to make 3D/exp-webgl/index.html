@@ -1,0 +1,64 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title></title> 
+		<style type="text/css">
+			html, body {
+				width: 100%;
+			}
+			html, body, canvas {
+				background: black;
+			}
+			div.container {
+				width: 1000px;
+				margin: auto;
+			}
+			canvas {
+				width: 1000px;
+				height: 600px;
+				margin: 30px auto;
+			}
+		</style>
+		<script id="shader-fs" type="x-shader/x-fragment">
+		  #ifdef GL_ES
+		  precision highp float;
+		  #endif
+
+		  varying vec4 vColor;
+		  
+		  void main(void) {
+			gl_FragColor = vColor;
+		  }
+		</script>
+		<script id="shader-vs" type="x-shader/x-vertex">
+		 attribute vec3 aVertexPosition;
+		 
+		 uniform vec3 color;
+		 uniform float scale;
+
+		 uniform mat4 uMVMatrix;
+		 uniform mat4 uPMatrix;
+			
+		 varying vec4 vColor;
+		 
+		 void main(void) {
+			gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+			float ratio = 1.0 - clamp((gl_Position.z -150.0 + scale / 2.0) / scale, 0.0, 0.8);
+			gl_PointSize = ratio * 10.0;
+			vColor = vec4(color, ratio);
+		  }
+		</script>
+		<script type="text/javascript" src="three.js/Three.js"></script>
+		<script type="text/javascript" src="three.js/core/Vector4.js"></script>
+		<script type="text/javascript" src="three.js/core/Matrix4.js"></script>
+		
+		<script type="text/javascript" src="trans.js"></script>
+		<script type="text/javascript" src="shapes.js"></script>
+		<script type="text/javascript" src="main.js"></script>
+	</head> 
+	<body onload="load();"> 
+		<div class="container">
+		<canvas id="viz" width="1000" height="600"></canvas> 
+		</div>
+	</body> 
+</html>
