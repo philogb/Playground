@@ -1,0 +1,89 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title></title> 
+		<style type="text/css">
+			html, body {
+				width: 100%;
+			}
+			html, body, canvas {
+				background: black;
+			}
+			div.container {
+				width: 1000px;
+				margin: auto;
+			}
+			canvas {
+				width: 1000px;
+				height: 600px;
+				margin: 30px auto;
+			}
+		</style>
+		<script id="shader-fs" type="x-shader/x-fragment">
+          #ifdef GL_ES
+          precision highp float;
+          #endif
+          
+          varying vec4 vcolor;
+          varying vec3 lightWeighting;
+          
+          void main(){
+          
+            gl_FragColor = vec4(vcolor.rgb * lightWeighting, vcolor.a);
+          
+          }
+        </script>
+        
+        <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 position;
+        attribute vec3 normal;
+        uniform vec4 color;
+        
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform mat4 normalMatrix;
+
+        uniform bool enableLighting;
+        uniform vec3 ambientColor;
+        uniform vec3 directionalColor;
+        uniform vec3 lightingDirection;
+        
+        varying vec4 vcolor;
+        varying vec3 lightWeighting;
+        
+        void main(void) {
+        
+          if(!enableLighting) {
+            lightWeighting = vec3(1.0, 1.0, 1.0);
+          } else {
+            vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+            float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
+            lightWeighting = ambientColor + directionalColor * directionalLightWeighting;
+          }
+          
+          vcolor = color;
+          gl_Position = projectionMatrix * viewMatrix * vec4( position, 1.0 );
+        
+        }
+		</script>
+        <!-- Stuff pulled from ThreeJS -->
+        <script type="text/javascript" src="three.js/Three.js"></script>
+		<script type="text/javascript" src="three.js/core/Vector3.js"></script>
+		<script type="text/javascript" src="three.js/core/Vector4.js"></script>
+		<script type="text/javascript" src="three.js/core/Matrix4.js"></script>
+		<script type="text/javascript" src="three.js/cameras/Camera.js"></script>
+        <!-- Model (Grid, Balls) Workers and WebGL methods -->
+		<script type="text/javascript" src="Grid.js"></script>
+		<script type="text/javascript" src="Balls.js"></script>
+		<script type="text/javascript" src="WebGLUtils.js"></script>
+		<script type="text/javascript" src="WorkerGroup.js"></script>
+        <!-- The Example -->
+        <script type="text/javascript" src="cubes.js"></script>
+	</head> 
+	<body onload="load();"> 
+		<div class="container">
+		<canvas id="viz" width="1000" height="600"></canvas> 
+		</div>
+	</body> 
+</html>
+

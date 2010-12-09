@@ -1,0 +1,4 @@
+## Isosurfaces
+
+A few experiments with WebGL, Web Workers and trying to make a decent client-side 
+implementation of the Marching Cubes algorithm.

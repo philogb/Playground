@@ -1,0 +1,212 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+		<title></title> 
+		<style type="text/css">
+			html, body {
+              margin:0;
+              padding:0;
+            }
+            h4 {
+              margin: 0;
+              font-size: 1.1em;
+              text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+              text-align: left;
+              margin-bottom: 3px;
+              margin-top: 3px;
+              border-bottom: 1px solid #ddd;
+            }
+            div.container {
+                position: relative;
+                width: 1000px;
+            }
+            canvas {
+              position: absolute;
+			  background: black;
+              top: 0;
+              left: 200px;
+			  width: 800px;
+			  height: 600px;
+              -webkit-box-shadow: 0 0 10px #000;
+              -moz-box-shadow: 0 0 10px #000;
+            }
+            .controls {
+              position: absolute;
+              top:0;
+              left:0;
+              width: 200px;
+              height: 600px;
+              font-size: 0.8em;
+            }
+            ul.predefined-fn {
+              margin: 0;
+              padding: 0;
+            }
+            ul.predefined-fn code {
+              display: none;
+            }
+            ul.predefined-fn li {
+              display: block;
+              cursor: pointer;
+              margin: 1px;
+              background: #ccc;
+              border 1px solid #555;
+              font-weight: bold;
+              color: #fff;
+              padding: 3px;
+            }
+            .error {
+              background-color: #fcc;
+            }
+		</style>
+		<script id="shader-fs" type="x-shader/x-fragment">
+          #ifdef GL_ES
+          precision highp float;
+          #endif
+          
+          varying vec4 vcolor;
+          varying vec3 lightWeighting;
+          
+          void main(){
+          
+            gl_FragColor = vec4(vcolor.rgb * lightWeighting, vcolor.a);
+          
+          }
+        </script>
+        
+        <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 position;
+        attribute vec3 normal;
+        uniform vec4 color;
+        
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform mat4 normalMatrix;
+
+        uniform bool enableLighting;
+        uniform vec3 ambientColor;
+        uniform vec3 directionalColor;
+        uniform vec3 lightingDirection;
+        
+        varying vec4 vcolor;
+        varying vec3 lightWeighting;
+        
+        void main(void) {
+        
+          if(!enableLighting) {
+            lightWeighting = vec3(1.0, 1.0, 1.0);
+          } else {
+            vec4 transformedNormal = normalMatrix * vec4(normal, 1.0);
+            float directionalLightWeighting = max(dot(transformedNormal.xyz, lightingDirection), 0.0);
+            lightWeighting = ambientColor + directionalColor * directionalLightWeighting;
+          }
+          
+          vcolor = color;
+          gl_Position = projectionMatrix * viewMatrix * vec4( position, 1.0 );
+        
+        }
+		</script>
+        <!-- Stuff pulled from ThreeJS -->
+        <script type="text/javascript" src="three.js/Three.js"></script>
+		<script type="text/javascript" src="three.js/core/Vector3.js"></script>
+		<script type="text/javascript" src="three.js/core/Vector4.js"></script>
+		<script type="text/javascript" src="three.js/core/Matrix4.js"></script>
+		<script type="text/javascript" src="three.js/cameras/Camera.js"></script>
+        <!-- Model (Grid, Balls) Workers and WebGL methods -->
+		<script type="text/javascript" src="Grid.js"></script>
+		<script type="text/javascript" src="WebGLUtils.js"></script>
+		<script type="text/javascript" src="WorkerGroup.js"></script>
+        <!-- The Example -->
+        <script type="text/javascript" src="isosurface.js"></script>
+	</head> 
+    <body onload="load();"> 
+      <div class="container">
+        <div class="controls">
+      <h4>Options</h4>
+      <table>
+        <tr>
+          <td>Enable time</td>
+          <td><input type="checkbox" id="enable-time" /></td>
+        </tr>
+        <tr>
+          <td>Auto rotate</td>
+          <td><input type="checkbox" id="auto-rotate" checked="checked" /></td>
+        </tr>
+        <tr>
+          <td>Isolevel</td>
+          <td>
+            <input type="number" id="isolevel" value="0.05" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <br /><br />
+            <h4>Predefined Functions</h4>
+            
+            <ul class="predefined-fn">
+              <li data-isolevel="0.05">Torus
+              <code>
+               var cos = Math.cos, 
+                  sin = Math.sin,
+                  sqrt = Math.sqrt,
+                  r = 0.2,
+                  R = 0.8,
+                  val = sqrt( x * x + y * y + z * z );
+
+                return (R - val) * (R - val) + z * z;
+              </code>
+              </li>
+              <li data-isolevel="0">Gyroid
+              <code>
+                var cos = Math.cos,
+                    sin = Math.sin,
+                    abs = Math.abs,
+                    r = x * x + y * y + z * z,
+                    ti = abs(sin(t / 100000)) / 10 + 0.06,
+                    v = ti * r;
+                
+                return (cos(x / v) * sin(y / v) + cos(y / v) * sin(z / v) + cos(z / v) * sin(x / v) + 1.0) - 0.1 * (1 - 0.016 * (r - 10 / r));
+              </code>
+              </li>
+              <li data-isolevel="7">Metaballs
+              <code>
+                var cos = Math.cos,
+                    sin = Math.sin,
+                    abs = Math.abs,
+                    ti = abs(sin(t / 2000)) / 1.5,
+                    idx = [[1, 1, 1], [1, -1, 1], [-1, -1, 1], [-1, 1, 1], [1, 1, -1], [1, -1, -1], [-1, -1, -1]],
+                    acum = 0;
+                for (var i = 0, l = idx.length; l > i; i++) {
+                  var id = idx[i],
+                    x0 = id[0] * ti,
+                    y0 = id[1] * ti,
+                    z0 = id[2] * ti;
+
+                  acum += 1 / (((x - x0) * (x - x0) + (y - y0) * (y - y0) + (z - z0) * (z - z0)) || 1);
+                }
+
+                return acum;
+              </code>
+              </li>
+            </ul>
+            <br /><br />
+            <h4>fn (x, y, z, t?)</h4>
+            <textarea id="fn" rows="20" cols="25">
+                var cos = Math.cos, 
+                  sin = Math.sin,
+                  sqrt = Math.sqrt,
+                  r = 0.2,
+                  R = 0.8,
+                  val = sqrt( x * x + y * y + z * z );
+
+                return (R - val) * (R - val) + z * z;
+          </textarea>
+          </td>
+        </tr>
+      </table>
+     </div>
+		<canvas id="viz" width="800" height="600"></canvas> 
+		</div>
+	</body> 
+</html>
+
