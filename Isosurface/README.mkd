@@ -1,4 +1,5 @@
-## Isosurfaces
+Isosurfaces
+=========
 
-A few experiments with WebGL, Web Workers and trying to make a decent client-side 
-implementation of the Marching Cubes algorithm.
+For more information read the blog entry: <http://blog.thejit.org/2010/12/10/animating-isosurfaces-with-webgl-and-workers/>
+

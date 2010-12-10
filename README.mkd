@@ -6,5 +6,5 @@ Copyright (c) Nicolas Garcia Belmonte
 This is just a place where I do some experiments with code and showcase them 
 at <http://blog.thejit.org/>.
 
-All code here that does not belong to any third-party library is MIT licensed.
+All code here that does not belong to any third-party library is MIT licensed and copyright Nicolas Garcia Belmonte.
 
