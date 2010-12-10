@@ -1,3 +1,18 @@
-## Three ways to make 3D
+Three ways to make 3D
+=========
 
 Is my first experiment with 3D rendered with 2D canvas, WebGL and the Scala Processing Development Environment (SPDE).
+
+The 2D canvas video:
+
+<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/37t8o4MSME8?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/37t8o4MSME8?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+
+The WebGL video:
+
+<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/qVt-R7KaULA?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/qVt-R7KaULA?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+
+The SPDE video:
+
+<object width="480" height="385"><param name="movie" value="http://www.youtube.com/v/Fl-V7GRAJJ4?fs=1&amp;hl=en_US"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Fl-V7GRAJJ4?fs=1&amp;hl=en_US" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="480" height="385"></embed></object>
+
+

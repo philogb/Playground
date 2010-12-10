@@ -1,4 +1,5 @@
-## Playground
+Playground
+=========
 
 Copyright (c) Nicolas Garcia Belmonte
 
